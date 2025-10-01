@@ -1,5 +1,4 @@
 import sharp from 'sharp';
-import { createCanvas, loadImage, ImageData } from 'canvas';
 import Potrace from 'potrace';
 import { optimize } from 'svgo';
 import { parse } from 'svg-parser';
@@ -317,14 +316,30 @@ export class TattooImageProcessor {
    * Extract clean line art from processed image
    */
   private async extractLineArt(inputBuffer: Buffer, opts: ProcessingOptions): Promise<Buffer> {
+    // Attempt to dynamically import node-canvas. If unavailable (e.g., on Vercel),
+    // fall back to vectorize->rasterize pipeline that doesn't require native deps.
+    let canvasLib: any = null;
+    try {
+      canvasLib = await import('canvas');
+    } catch {}
+
+    if (!canvasLib) {
+      // Fallback: vectorize to SVG then rasterize to PNG using sharp only
+      const svgBuffer = await this.convertToSvg(inputBuffer, opts);
+      const svgString = opts.optimizeSvg ? await this.optimizeSvg(svgBuffer, opts) : svgBuffer.toString();
+      return await this.rasterizeSvgToPng(svgString, opts);
+    }
+
+    const { createCanvas, loadImage, ImageData } = canvasLib;
+
     // Load image into canvas for advanced processing
     const image = await loadImage(inputBuffer);
-    
+
     // Determine final canvas size
     const targetSize = this.getTargetSize(opts);
     const canvasWidth = targetSize ? targetSize.width : image.width;
     const canvasHeight = targetSize ? targetSize.height : image.height;
-    
+
     const canvas = createCanvas(canvasWidth, canvasHeight);
     const ctx = canvas.getContext('2d');
 
@@ -340,16 +355,13 @@ export class TattooImageProcessor {
 
     // Draw image with proper scaling
     if (targetSize && opts.maintainAspectRatio !== false) {
-      // Scale to fit within target size while maintaining aspect ratio
       const scale = Math.min(canvasWidth / image.width, canvasHeight / image.height);
       const scaledWidth = image.width * scale;
       const scaledHeight = image.height * scale;
       const x = (canvasWidth - scaledWidth) / 2;
       const y = (canvasHeight - scaledHeight) / 2;
-      
       ctx.drawImage(image, x, y, scaledWidth, scaledHeight);
     } else {
-      // Draw image to fill exact dimensions
       ctx.drawImage(image, 0, 0, canvasWidth, canvasHeight);
     }
 
