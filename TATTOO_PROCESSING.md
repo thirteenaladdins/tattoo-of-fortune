@@ -29,7 +29,7 @@ The core processing engine using:
 - **Sharp**: Image manipulation and preprocessing
 - **Potrace**: Raster to vector conversion
 - **SVGO**: SVG optimization and cleanup
-- **Canvas**: Advanced image processing operations
+- **Canvas**: Advanced image processing operations (optional, with fallback)
 
 ### API Endpoint (`src/routes/api/process-tattoo/+server.ts`)
 RESTful API for processing images:
@@ -158,7 +158,7 @@ Returns supported formats and processing capabilities.
 3. **Edge Detection**: Apply noise reduction and sharpening
 4. **Format Conversion**:
    - **SVG**: Use Potrace for raster-to-vector conversion, then optimize with SVGO
-   - **PNG**: Extract clean line art with custom canvas processing
+   - **PNG**: Extract clean line art using Sharp-based processing (with optional canvas acceleration)
 5. **Styling**: Apply consistent stroke properties and colors
 6. **Output**: Return processed image with metadata
 
@@ -167,8 +167,10 @@ Returns supported formats and processing capabilities.
 The system requires these dependencies (already added to package.json):
 
 ```bash
-npm install sharp potrace svg-parser svgo canvas
+npm install sharp potrace svg-parser svgo
 ```
+
+Note: The `canvas` package is optional and provides enhanced processing capabilities. If not available (e.g., in serverless environments), the system gracefully falls back to Sharp-based processing.
 
 ## Demo
 
