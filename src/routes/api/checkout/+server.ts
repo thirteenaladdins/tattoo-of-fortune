@@ -43,7 +43,7 @@ export const POST: RequestHandler = async ({ request }) => {
           quantity: 1,
         },
       ],
-      success_url: `${appBaseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${appBaseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appBaseUrl}/cancel`,
       metadata: { artwork_id },
     });
