@@ -18,21 +18,32 @@ export const POST: RequestHandler = async ({ request, url }) => {
       });
     }
 
-    // For testing: Use the test Stripe link with proper redirect URLs
+    if (!stripe) {
+      return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
+        status: 500,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+
     const baseUrl = `${url.protocol}//${url.host}`;
-    const testStripeUrl = "https://buy.stripe.com/test_dRmbIT3ao9tF7HDdpBgrS00";
-    
-    // Store the artwork ID in session storage for the success page to retrieve
-    // This is a simple approach for testing - in production you'd want to use Stripe metadata
-    const successUrl = `${baseUrl}/checkout/success?artwork_id=${encodeURIComponent(artworkId)}&test=true`;
-    
-    // Redirect to test Stripe with success URL as a parameter
-    const stripeUrlWithRedirect = `${testStripeUrl}?success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(baseUrl)}`;
-    
-    return new Response(JSON.stringify({ 
-      id: 'test-session', 
-      url: stripeUrlWithRedirect 
-    }), {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: { name: `Tattoo Fortune: ${artworkId}` },
+            unit_amount: 1500,
+          },
+          quantity: 1,
+        },
+      ],
+      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/`,
+      metadata: { artworkId },
+    });
+
+    return new Response(JSON.stringify({ id: session.id, url: session.url }), {
       status: 200,
       headers: { 'content-type': 'application/json' },
     });
