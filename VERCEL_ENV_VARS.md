@@ -1,16 +1,10 @@
 # Vercel Environment Variables
 
-## Required for Production
+## Required Environment Variables
 
 ### Stripe Configuration
 ```
-STRIPE_SECRET_KEY=sk_live_... (for production)
-STRIPE_WEBHOOK_SECRET=whsec_... (from Stripe webhook settings)
-```
-
-### For Testing
-```
-STRIPE_SECRET_KEY=sk_test_... (for testing)
+STRIPE_SECRET_KEY=sk_test_... (for testing) or sk_live_... (for production)
 STRIPE_WEBHOOK_SECRET=whsec_... (from Stripe webhook settings)
 ```
 
@@ -21,13 +15,24 @@ STRIPE_WEBHOOK_SECRET=whsec_... (from Stripe webhook settings)
 PUBLIC_STRIPE_CHECKOUT_URL=https://buy.stripe.com/test_dRmbIT3ao9tF7HDdpBgrS00
 ```
 
-## How to Set in Vercel
+## How to Set in Vercel Dashboard
 
 1. Go to your Vercel project dashboard
 2. Click on "Settings" tab
-3. Click on "Environment Variables"
-4. Add each variable with its value
-5. Make sure to set them for all environments (Production, Preview, Development)
+3. Click on "Environment Variables" in the left sidebar
+4. Click "Add New" for each variable:
+   - **Name**: `STRIPE_SECRET_KEY`
+   - **Value**: Your Stripe secret key (starts with `sk_test_` or `sk_live_`)
+   - **Environments**: Select all (Production, Preview, Development)
+5. Repeat for `STRIPE_WEBHOOK_SECRET`
+6. Click "Save" after adding each variable
+
+## Important Notes
+
+- **Do NOT** use the `@secret_name` syntax in vercel.json
+- Set the actual values directly in the Vercel dashboard
+- Make sure to set them for all environments you plan to use
+- The values will be encrypted and stored securely by Vercel
 
 ## Stripe Webhook Setup
 

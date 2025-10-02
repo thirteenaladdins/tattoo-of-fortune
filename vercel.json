@@ -2,30 +2,26 @@
   "buildCommand": "npm run build",
   "functions": {
     "src/routes/api/checkout/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/purchase/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/claim-download/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/download/[token]/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/inventory/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/fairness/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     },
     "src/routes/api/stripe/webhook/+server.ts": {
-      "runtime": "nodejs18.x"
+      "runtime": "nodejs22.x"
     }
-  },
-  "env": {
-    "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
   },
   "rewrites": [
     {

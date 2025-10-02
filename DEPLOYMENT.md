@@ -36,10 +36,12 @@ Set these in your Vercel project settings:
 ### 3. Set Environment Variables
 In Vercel project settings → Environment Variables:
 
-```
-STRIPE_SECRET_KEY=sk_test_your_key_here
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
-```
+1. Go to your project dashboard
+2. Click "Settings" → "Environment Variables"
+3. Add these variables:
+   - `STRIPE_SECRET_KEY` = `sk_test_...` (for testing) or `sk_live_...` (for production)
+   - `STRIPE_WEBHOOK_SECRET` = `whsec_...` (from Stripe webhook settings)
+4. Make sure to select all environments (Production, Preview, Development)
 
 ### 4. Deploy
 Click "Deploy" and wait for the build to complete.
