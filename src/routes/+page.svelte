@@ -95,7 +95,7 @@
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ artworkId: selectedArtwork.id }),
+        body: JSON.stringify({ artwork_id: selectedArtwork.id }),
       });
       const payload = await res.json().catch(() => ({}));
       if (!res.ok) {

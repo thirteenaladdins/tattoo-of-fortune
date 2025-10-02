@@ -1,9 +1,3 @@
 {
-  "buildCommand": "npm run build",
-  "rewrites": [
-    {
-      "source": "/api/process-tattoo",
-      "destination": "/api/process-tattoo-disabled"
-    }
-  ]
+  "buildCommand": "npm run build"
 }

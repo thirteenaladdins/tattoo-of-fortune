@@ -2,45 +2,50 @@ import type { RequestHandler } from '@sveltejs/kit';
 import Stripe from 'stripe';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
+const priceId = process.env.PRICE_ID;
+const appBaseUrl = process.env.APP_BASE_URL;
+
 if (!stripeSecret) {
   console.warn('STRIPE_SECRET_KEY is not set. /api/checkout will not work.');
 }
+if (!priceId) {
+  console.warn('PRICE_ID is not set. /api/checkout will not work.');
+}
+if (!appBaseUrl) {
+  console.warn('APP_BASE_URL is not set. /api/checkout will not work.');
+}
+
 const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: '2023-10-16' }) : null;
 
-export const POST: RequestHandler = async ({ request, url }) => {
+export const POST: RequestHandler = async ({ request }) => {
   try {
     const body = await request.json().catch(() => ({}));
-    const { artworkId } = body as { artworkId?: string };
-    if (!artworkId) {
-      return new Response(JSON.stringify({ error: 'Missing artworkId' }), {
+    const { artwork_id } = body as { artwork_id?: string };
+    if (!artwork_id) {
+      return new Response(JSON.stringify({ error: 'Missing artwork_id' }), {
         status: 400,
         headers: { 'content-type': 'application/json' },
       });
     }
 
-    if (!stripe) {
+    if (!stripe || !priceId || !appBaseUrl) {
       return new Response(JSON.stringify({ error: 'Stripe not configured' }), {
         status: 500,
         headers: { 'content-type': 'application/json' },
       });
     }
 
-    const baseUrl = `${url.protocol}//${url.host}`;
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [
         {
-          price_data: {
-            currency: 'usd',
-            product_data: { name: `Tattoo Fortune: ${artworkId}` },
-            unit_amount: 1500,
-          },
+          price: priceId,
           quantity: 1,
         },
       ],
-      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/`,
-      metadata: { artworkId },
+      success_url: `${appBaseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appBaseUrl}/cancel`,
+      metadata: { artwork_id },
     });
 
     return new Response(JSON.stringify({ id: session.id, url: session.url }), {

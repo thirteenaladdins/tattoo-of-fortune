@@ -27,7 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session;
-    const artworkId = (session.metadata?.artworkId as string) || null;
+    const artworkId = (session.metadata?.artwork_id as string) || null;
     if (artworkId && session.payment_status === 'paid') {
       const result = finalizePurchase(artworkId);
       if (result.success) {
