@@ -6,12 +6,7 @@ const config = {
   preprocess: vitePreprocess(),
   kit: {
     adapter: adapter({
-      runtime: "nodejs22.x",
-      functions: {
-        "src/routes/api/**/*.ts": {
-          runtime: "nodejs22.x",
-        },
-      },
+      runtime: "nodejs22"
     }),
   },
 };
