@@ -46,12 +46,44 @@ export const GET: RequestHandler = async ({ url }) => {
 
     const filePath = artwork.downloadPath ?? artwork.path;
     try {
-      const absolutePath = join(process.cwd(), 'static', filePath.replace(/^\//, ''));
-      const data = await readFile(absolutePath);
-      const body = new Uint8Array(data);
+      const blobBaseUrl = process.env.BLOB_BASE_URL;
       const ext = extname(filePath).toLowerCase();
-      const mime = MIME_MAP[ext] ?? 'application/octet-stream';
 
+      // Prefer Vercel Blob if configured
+      if (blobBaseUrl) {
+        const base = blobBaseUrl.replace(/\/+$/, '');
+        const key = filePath.replace(/^\//, '');
+        const assetUrl = `${base}/${key}`;
+        const res = await fetch(assetUrl);
+        if (!res.ok) {
+          if (res.status === 404) {
+            return new Response('File not found', { status: 404 });
+          }
+          return new Response('Failed to fetch from blob', { status: 502 });
+        }
+
+        const body = new Uint8Array(await res.arrayBuffer());
+        const mime = res.headers.get('content-type') ?? MIME_MAP[ext] ?? 'application/octet-stream';
+        return new Response(body, {
+          status: 200,
+          headers: {
+            'content-type': mime,
+            'content-disposition': `attachment; filename="${artwork.id}${ext}"`,
+          },
+        });
+      }
+
+      // Fallback: fetch from same-origin static (works on Vercel)
+      const sameOriginUrl = new URL(filePath, url.origin).toString();
+      const res = await fetch(sameOriginUrl);
+      if (!res.ok) {
+        if (res.status === 404) {
+          return new Response('File not found', { status: 404 });
+        }
+        return new Response('Failed to fetch static file', { status: 502 });
+      }
+      const body = new Uint8Array(await res.arrayBuffer());
+      const mime = res.headers.get('content-type') ?? MIME_MAP[ext] ?? 'application/octet-stream';
       return new Response(body, {
         status: 200,
         headers: {
