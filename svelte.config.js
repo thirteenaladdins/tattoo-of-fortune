@@ -5,7 +5,14 @@ import { vitePreprocess } from "@sveltejs/kit/vite";
 const config = {
   preprocess: vitePreprocess(),
   kit: {
-    adapter: adapter(),
+    adapter: adapter({
+      runtime: "nodejs18.x",
+      functions: {
+        "src/routes/api/**/*.ts": {
+          runtime: "nodejs18.x",
+        },
+      },
+    }),
   },
 };
 

@@ -209,53 +209,7 @@
           <p class="text-xs text-gray-500 mt-1">{copy.PAYMENT_BLUR_TEXT}</p>
         </div>
 
-        <!-- Payment Form (Mock) -->
-        <div class="space-y-4 mb-6">
-          <div>
-            <label
-              for="mock-card-number"
-              class="block text-sm font-light text-gray-700 mb-1 tracking-wide"
-              >Card Number</label
-            >
-            <input
-              id="mock-card-number"
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              disabled={isProcessingPayment}
-            />
-          </div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                for="mock-expiry"
-                class="block text-sm font-light text-gray-700 mb-1 tracking-wide"
-                >Expiry</label
-              >
-              <input
-                id="mock-expiry"
-                type="text"
-                placeholder="MM/YY"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                disabled={isProcessingPayment}
-              />
-            </div>
-            <div>
-              <label
-                for="mock-cvc"
-                class="block text-sm font-light text-gray-700 mb-1 tracking-wide"
-                >CVC</label
-              >
-              <input
-                id="mock-cvc"
-                type="text"
-                placeholder="123"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                disabled={isProcessingPayment}
-              />
-            </div>
-          </div>
-        </div>
+        <!-- Removed redundant on-site payment form (Stripe Checkout is used) -->
 
         <!-- Payment Button -->
         <button

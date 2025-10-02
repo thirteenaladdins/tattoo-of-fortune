@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [sveltekit()],
   build: {
     rollupOptions: {
-      external: ['canvas']
-    }
-  }
+      external: ["canvas"],
+    },
+  },
 });

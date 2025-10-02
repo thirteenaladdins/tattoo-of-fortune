@@ -41,7 +41,13 @@
   $: stripeUrl = import.meta.env.PUBLIC_STRIPE_CHECKOUT_URL;
   $: canBuy = typeof stripeUrl === "string" && stripeUrl !== STRIPE_PLACEHOLDER;
 
-  $: if (showDownload && downloadToken && !securePreviewUrl && !previewLoading && !previewError) {
+  $: if (
+    showDownload &&
+    downloadToken &&
+    !securePreviewUrl &&
+    !previewLoading &&
+    !previewError
+  ) {
     loadSecurePreview();
   }
 
@@ -99,8 +105,27 @@
       } finally {
         isDownloading = false;
       }
-    } else if (canBuy) {
-      window.open(stripeUrl, "_blank");
+    } else {
+      // Use checkout API for purchase
+      try {
+        const res = await fetch("/api/checkout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ artworkId: artwork.id }),
+        });
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const { error } = payload as { error?: string };
+          alert(`Checkout failed: ${error}`);
+          return;
+        }
+        const url = (payload as { url?: string }).url;
+        if (url) {
+          window.location.href = url;
+        }
+      } catch (err) {
+        alert("Network error while starting checkout");
+      }
     }
   }
 
@@ -171,7 +196,9 @@
       <!-- Artwork Image -->
       <div class="mb-6 min-h-[200px] flex items-center justify-center">
         {#if previewLoading}
-          <div class="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto h-48 bg-gradient-to-r from-purple-50 via-white to-purple-50 animate-pulse rounded-lg border border-purple-100 flex items-center justify-center text-sm text-purple-400">
+          <div
+            class="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto h-48 bg-gradient-to-r from-purple-50 via-white to-purple-50 animate-pulse rounded-lg border border-purple-100 flex items-center justify-center text-sm text-purple-400"
+          >
             Preparing your artwork…
           </div>
         {:else if securePreviewUrl && !imgFailed}
@@ -187,10 +214,13 @@
           />
         {:else if previewError}
           <div class="text-sm text-red-600 text-center">
-            {previewError}. Use the download button to retrieve the file directly.
+            {previewError}. Use the download button to retrieve the file
+            directly.
           </div>
         {:else}
-          <div class="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto h-48 bg-gray-100 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-sm text-gray-500">
+          <div
+            class="w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto h-48 bg-gray-100 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-sm text-gray-500"
+          >
             Awaiting secure preview…
           </div>
         {/if}
@@ -262,7 +292,8 @@
       <div class="flex flex-col sm:flex-row gap-3">
         <button
           on:click={handlePrimaryAction}
-          disabled={(!canBuy && !showDownload) || (showDownload && (!downloadToken || isDownloading))}
+          disabled={(!canBuy && !showDownload) ||
+            (showDownload && (!downloadToken || isDownloading))}
           class="
             flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700
             text-white font-semibold rounded-lg
@@ -298,7 +329,9 @@
         <p class="mt-3 text-sm text-red-600">{downloadError}</p>
       {/if}
       {#if downloadSuccess}
-        <p class="mt-3 text-sm text-green-600">Download ready — check your files.</p>
+        <p class="mt-3 text-sm text-green-600">
+          Download ready — check your files.
+        </p>
       {/if}
 
       <!-- Optional: Roll Again -->
