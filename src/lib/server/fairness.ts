@@ -1,4 +1,9 @@
-import { createHash, createHmac, randomBytes } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  createSecretKey,
+  randomBytes,
+} from "node:crypto";
 
 type CommitRecord = {
   id: string;
@@ -32,9 +37,8 @@ export function deriveIndex(
   n: number,
 ): number {
   const msg = `${clientSeed}:${nonce}`;
-  const mac = createHmac("sha256", Buffer.from(serverSeed, "hex"))
-    .update(msg)
-    .digest();
+  const key = Uint8Array.from(Buffer.from(serverSeed, "hex"));
+  const mac = createHmac("sha256", createSecretKey(key)).update(msg).digest();
   // Use first 8 bytes as uint64, mod n
   const hi = mac.readUInt32BE(0);
   const lo = mac.readUInt32BE(4);
@@ -62,13 +66,14 @@ export function resolveRoll(
   return { index, hash: rec.hash, nonce: rec.nonce };
 }
 
-export function revealCommit(
-  id: string,
-): { serverSeed: string; nonce: string; hash: string } {
+export function revealCommit(id: string): {
+  serverSeed: string;
+  nonce: string;
+  hash: string;
+} {
   const rec = commits.get(id);
   if (!rec) {
     throw new Error("Invalid commit id");
   }
   return { serverSeed: rec.serverSeed, nonce: rec.nonce, hash: rec.hash };
 }
-

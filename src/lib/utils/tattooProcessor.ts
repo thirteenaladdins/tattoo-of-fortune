@@ -168,7 +168,7 @@ export const tattooProcessing = {
     options: Partial<ProcessingOptions> = {}
   ): Promise<ProcessTattooResponse> {
     const processor = new TattooProcessorClient();
-    const processingOptions = {
+    const processingOptions: Partial<ProcessingOptions> = {
       outputFormat: 'svg' as const,
       strokeWidth: 2,
       strokeColor: '#000000',
@@ -197,7 +197,7 @@ export const tattooProcessing = {
     options: Partial<ProcessingOptions> = {}
   ): Promise<ProcessTattooResponse> {
     const processor = new TattooProcessorClient();
-    const processingOptions = {
+    const processingOptions: Partial<ProcessingOptions> = {
       outputFormat: 'png' as const,
       backgroundColor: 'transparent',
       threshold: 128,

@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import sharp, { type ResizeOptions } from 'sharp';
 import Potrace from 'potrace';
 import { optimize } from 'svgo';
 import { parse } from 'svg-parser';
@@ -194,7 +194,7 @@ export class TattooImageProcessor {
 
     // Apply consistent scaling with high quality
     if (targetSize) {
-      const resizeOptions = opts.maintainAspectRatio !== false 
+      const resizeOptions: ResizeOptions = opts.maintainAspectRatio !== false
         ? { 
             width: targetSize.width, 
             height: targetSize.height, 
@@ -278,7 +278,7 @@ export class TattooImageProcessor {
         turnPolicy: Potrace.Potrace.TURNPOLICY_MINORITY,
       };
 
-      Potrace.trace(inputBuffer, params, (err, svg) => {
+      Potrace.trace(inputBuffer, params, (err: Error | null, svg: string) => {
         if (err) {
           reject(err);
           return;
@@ -533,10 +533,13 @@ export class TattooImageProcessor {
     
     const result = optimize(svgString, {
       plugins: [
-        'preset-default',
         {
-          name: 'removeViewBox',
-          active: false, // Keep viewBox for scaling
+          name: 'preset-default',
+          params: {
+            overrides: {
+              removeViewBox: false, // Keep viewBox for scaling
+            },
+          },
         },
         {
           name: 'cleanupNumericValues',

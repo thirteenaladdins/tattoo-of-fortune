@@ -3,17 +3,24 @@
 ## Required Environment Variables
 
 ### Stripe Configuration
+
 ```
 STRIPE_SECRET_KEY=sk_test_... (for testing) or sk_live_... (for production)
 STRIPE_WEBHOOK_SECRET=whsec_... (from Stripe webhook settings)
+PRICE_ID=price_... (Stripe Price used by Checkout)
+APP_BASE_URL=https://your-app.vercel.app
 ```
 
 ## Optional
 
-### Static Checkout URL (if using)
+### Free Reveal Mode
+
 ```
-PUBLIC_STRIPE_CHECKOUT_URL=https://buy.stripe.com/test_dRmbIT3ao9tF7HDdpBgrS00
+PUBLIC_ENABLE_FREE_REVEAL=false
+ENABLE_FREE_REVEAL=false
 ```
+
+Set both values to `true` only when you intentionally want to skip Stripe Checkout and reveal/download designs immediately after a roll.
 
 ## How to Set in Vercel Dashboard
 
@@ -24,7 +31,7 @@ PUBLIC_STRIPE_CHECKOUT_URL=https://buy.stripe.com/test_dRmbIT3ao9tF7HDdpBgrS00
    - **Name**: `STRIPE_SECRET_KEY`
    - **Value**: Your Stripe secret key (starts with `sk_test_` or `sk_live_`)
    - **Environments**: Select all (Production, Preview, Development)
-5. Repeat for `STRIPE_WEBHOOK_SECRET`
+5. Repeat for `STRIPE_WEBHOOK_SECRET`, `PRICE_ID`, and `APP_BASE_URL`
 6. Click "Save" after adding each variable
 
 ## Important Notes

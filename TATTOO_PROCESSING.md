@@ -172,13 +172,9 @@ npm install sharp potrace svg-parser svgo
 
 Note: The `canvas` package is optional and provides enhanced processing capabilities. If not available (e.g., in serverless environments), the system gracefully falls back to Sharp-based processing.
 
-## Demo
+## Processing UI
 
-Visit `/process-demo` to see the complete system in action with:
-- Interactive processing interface
-- Real-time preview
-- Processing history
-- Download functionality
+The standalone `/process-demo` page has been removed from the public app. The reusable processing utilities, API route, and `TattooProcessor.svelte` component remain available if you want to wire this workflow into an authenticated admin or internal tooling area later.
 
 ## Integration with AI Tattoo Generation
 

@@ -17,12 +17,10 @@ export const copy = {
   PAYMENT_BLUR_TEXT: "Design will be revealed after payment",
 
   // Disclaimers
-  DISCLAIMER:
-    "Every tattoo is a work of fate.",
+  DISCLAIMER: "Every tattoo is a work of fate.",
 
   // Navigation
   NAV_ABOUT: "About",
-  NAV_FAQ: "FAQ",
 
   // Scarcity badge
   SCARCITY_TEXT: "10 / 10 available this week",
@@ -42,11 +40,5 @@ export const copy = {
 
   // About page content (TODO: expand)
   ABOUT_TITLE: "About Tattoo of Fortune",
-  ABOUT_CONTENT:
-    "Your story begins here. The future awaits.",
-
-  // FAQ content (TODO: expand)
-  FAQ_TITLE: "Frequently Asked Questions",
-  FAQ_CONTENT:
-    "License, revisions, delivery time, what 'fortune' means, refund/credit policy.",
+  ABOUT_CONTENT: "Your story begins here. The future awaits.",
 };

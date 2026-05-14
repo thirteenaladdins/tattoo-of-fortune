@@ -35,10 +35,8 @@ tattoo-of-fortune/
    ├─ routes/
    │  ├─ +layout.svelte       # Global shell layout
    │  ├─ +page.svelte         # Landing page with roll flow
-   │  ├─ about/
-   │  │  └─ +page.svelte      # About page
-   │  └─ faq/
-   │     └─ +page.svelte      # FAQ page
+   │  └─ about/
+   │     └─ +page.svelte      # About page
    ├─ lib/
    │  ├─ components/
    │  │  ├─ BackgroundArt.svelte    # Full-bleed background
@@ -76,6 +74,15 @@ Set environment variables in `.env`:
 
 - `STRIPE_SECRET_KEY` (server) — your Stripe secret API key
 - `STRIPE_WEBHOOK_SECRET` (server) — webhook signing secret
+- `PRICE_ID` (server) — the Stripe Price used for Checkout
+- `APP_BASE_URL` (server) — deployed app origin used for success/cancel redirects
+
+Optional free-reveal mode for demos or non-paid launches:
+
+- `PUBLIC_ENABLE_FREE_REVEAL=true` — lets the browser use the free reveal path
+- `ENABLE_FREE_REVEAL=true` — lets the server mint download tokens without Stripe
+
+Keep both free-reveal variables unset or `false` when Stripe payment is required.
 
 Note: `PUBLIC_STRIPE_CHECKOUT_URL` is no longer used with the integrated Checkout flow.
 
@@ -109,8 +116,11 @@ npx vercel
 ## 🎮 User Flow
 
 1. **IDLE** - Landing page with hero background and "Roll" button
-2. **ROLLING** - 1.8s overlay with loading animation
-3. **REVEALED** - Modal showing selected artwork with Buy/Close options
+2. **ROLLING** - 4s overlay with loading animation and fair selection
+3. **PAYMENT** - Stripe Checkout when free-reveal mode is disabled
+4. **REVEALED** - Modal showing selected artwork and download action
+
+When `PUBLIC_ENABLE_FREE_REVEAL=true` and `ENABLE_FREE_REVEAL=true`, the flow skips Stripe Checkout and reveals the downloadable design immediately after the roll.
 
 ## 🎨 Customization
 
@@ -139,7 +149,7 @@ npx vercel
 - [ ] Add hero image to `static/hero/hero-placeholder.jpg`
 - [ ] Add 5-10 fortune artworks to `static/fortunes/`
 - [ ] Update `src/lib/data/artworks.ts` with actual artwork data
-- [ ] Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` in `.env`
+- [ ] Set `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `PRICE_ID`, and `APP_BASE_URL` in `.env`
 - [ ] Test complete flow: roll → reveal → buy link
 - [ ] Deploy to Vercel
 
