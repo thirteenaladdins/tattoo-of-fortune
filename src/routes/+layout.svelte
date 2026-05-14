@@ -86,20 +86,6 @@
           >
             {copy.NAV_ABOUT}
           </a>
-          <a
-            href="/faq"
-            on:click|preventDefault={() => navigateTo("/faq")}
-            class="text-gray-300 hover:text-purple-400 transition-all duration-300 font-medium hover:scale-105"
-          >
-            {copy.NAV_FAQ}
-          </a>
-          <a
-            href="/process-demo"
-            on:click|preventDefault={() => navigateTo("/process-demo")}
-            class="text-gray-300 hover:text-purple-400 transition-all duration-300 font-medium hover:scale-105"
-          >
-            Process Demo
-          </a>
         </div>
 
         <!-- Mobile Menu Button -->
@@ -138,20 +124,6 @@
             class="block text-gray-300 hover:text-purple-400 transition-colors font-medium py-2"
           >
             {copy.NAV_ABOUT}
-          </a>
-          <a
-            href="/faq"
-            on:click|preventDefault={() => navigateTo("/faq")}
-            class="block text-gray-300 hover:text-purple-400 transition-colors font-medium py-2"
-          >
-            {copy.NAV_FAQ}
-          </a>
-          <a
-            href="/process-demo"
-            on:click|preventDefault={() => navigateTo("/process-demo")}
-            class="block text-gray-300 hover:text-purple-400 transition-colors font-medium py-2"
-          >
-            Process Demo
           </a>
         </div>
       </div>

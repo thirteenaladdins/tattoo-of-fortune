@@ -9,7 +9,6 @@
   import RevealModal from "$lib/components/RevealModal.svelte";
   import { copy } from "$lib/data/copy";
   import {
-    rollArtwork,
     fetchAvailableArtworks,
     startFairCommit,
     resolveFairIndex,
@@ -25,6 +24,8 @@
 
   // State management
   let phase: "idle" | "rolling" | "payment" | "revealed" = "idle";
+  const freeRevealEnabled =
+    import.meta.env.PUBLIC_ENABLE_FREE_REVEAL === "true";
   let selectedArtwork: Artwork | null = null;
   let fair: {
     id: string;
@@ -68,7 +69,11 @@
           nonce: resolved.nonce,
         };
         selectedArtwork = available[resolved.index];
-        phase = "payment"; // Go to payment instead of revealed
+        if (freeRevealEnabled) {
+          await handleFreeReveal();
+        } else {
+          phase = "payment";
+        }
       } catch (e) {
         // Fallback: reset state if inventory fetch fails
         phase = "idle";
@@ -76,6 +81,40 @@
         console.error(e);
       }
     }, 4000); // 4 seconds
+  }
+
+  async function handleFreeReveal(): Promise<void> {
+    if (!selectedArtwork) return;
+    try {
+      const res = await fetch("/api/purchase", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: selectedArtwork.id }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as {
+        token?: string;
+        error?: string;
+      };
+      if (!res.ok || !payload.token) {
+        throw new Error(payload.error ?? "Unable to reveal design");
+      }
+      downloadToken = payload.token;
+      if (fair?.id) {
+        const revealed = await revealFairSeed(fair.id);
+        fair = { ...fair, ...revealed };
+      }
+      phase = "revealed";
+    } catch (err) {
+      console.error(err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Unable to reveal design without checkout",
+      );
+      phase = "idle";
+      selectedArtwork = null;
+      downloadToken = null;
+    }
   }
 
   function handleCloseModal() {
