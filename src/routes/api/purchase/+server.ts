@@ -1,9 +1,7 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import { purchaseArtwork } from "$lib/server/inventory";
 
-const freeRevealEnabled =
-  process.env.ENABLE_FREE_REVEAL === "true" ||
-  process.env.PUBLIC_ENABLE_FREE_REVEAL === "true";
+const freeRevealEnabled = process.env.ENABLE_FREE_REVEAL === "true";
 
 export const POST: RequestHandler = async ({ request }) => {
   if (!freeRevealEnabled) {
